@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Car Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500&display=swap" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Dynamic gradient background layer -->
+  <div id="bg-gradient"></div>
+
+  <!-- Noise texture overlay for depth -->
+  <div id="noise-overlay"></div>
+
+  <!-- Three.js canvas container -->
+  <div id="canvas-container"></div>
+
+  <!-- Vignette overlay — radial gradient driven by per-car config -->
+  <div id="vignette-overlay"></div>
+
+  <!-- Per-car colour tint overlay (optional blend mode effect) -->
+  <div id="color-tint"></div>
+
+  <!-- Top bar -->
+  <header id="top-bar">
+    <div id="logo">SHOWCASE</div>
+    <div id="car-counter">
+      <span id="current-index">01</span>
+      <span class="sep">/</span>
+      <span id="total-count">01</span>
+    </div>
+  </header>
+
+  <!-- Car info panel -->
+  <div id="car-info">
+    <div id="car-brand"></div>
+    <div id="car-name"></div>
+    <div id="car-tagline"></div>
+  </div>
+
+  <!-- Specs panel -->
+  <div id="car-specs">
+    <div class="spec" id="spec-hp">
+      <div class="spec-value">—</div>
+      <div class="spec-label">HORSEPOWER</div>
+    </div>
+    <div class="spec-divider"></div>
+    <div class="spec" id="spec-speed">
+      <div class="spec-value">—</div>
+      <div class="spec-label">TOP SPEED</div>
+    </div>
+    <div class="spec-divider"></div>
+    <div class="spec" id="spec-accel">
+      <div class="spec-value">—</div>
+      <div class="spec-label">0-100 KM/H</div>
+    </div>
+  </div>
+
+  <!-- Bottom navigation -->
+  <nav id="bottom-nav">
+    <button id="btn-prev" class="nav-arrow" aria-label="Previous car">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+
+    <div id="nav-track">
+      <!-- Car nav dots generated dynamically -->
+    </div>
+
+    <button id="btn-next" class="nav-arrow" aria-label="Next car">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </nav>
+
+  <!-- Accent line -->
+  <div id="accent-line"></div>
+
+  <!-- Loading overlay -->
+  <div id="loading-screen">
+    <div id="loading-inner">
+      <div id="loading-bar-track"><div id="loading-bar-fill"></div></div>
+      <div id="loading-label">LOADING MODEL</div>
+    </div>
+  </div>
+
+  <!--
+    Import map — resolves the bare "three" specifier used inside
+    GLTFLoader, OrbitControls, etc. Must appear before any module script.
+  -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+      "three/examples/jsm/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <!-- GSAP via CDN (classic script — executes before deferred modules) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- Bootstrap module: import THREE + addons, then load app scripts -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader }    from 'three/examples/jsm/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+    import { RGBELoader }    from 'three/examples/jsm/loaders/RGBELoader.js';
+    import { DRACOLoader }   from 'three/examples/jsm/loaders/DRACOLoader.js';
+
+    // Expose the single shared THREE instance globally
+    window.THREE = THREE;
+    // Expose loaders so carShowcase.js (classic script) can access them
+    window._THREE_EXTRAS = { GLTFLoader, OrbitControls, RGBELoader, DRACOLoader };
+
+    // Load app scripts sequentially after the module is ready
+    const script1 = document.createElement('script');
+    script1.src = 'js/carShowcase.js';
+    document.head.appendChild(script1);
+
+    script1.onload = () => {
+      const script2 = document.createElement('script');
+      script2.src = 'js/cars.js';
+      document.head.appendChild(script2);
+    };
+  </script>
+
+</body>
+</html>
